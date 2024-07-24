@@ -1,0 +1,21 @@
+# HLM_RLM
+
+Dataset Description: The metabolic stability of compounds in Human and Rat Liver Microsomes is a crucial parameter in early-stage drug development. 
+Compounds are classified as either stable or unstable based on their half-life. 
+We have sanitized and reorganized the datasets derived from a published paper [1].
+
+Task description: Binary classification. Given a drug SMILES string, predict the metabolic stability of the compound in Human and Rat Liver Microsomes.
+
+Dataset statistics: HLM dataset: 6013 drugs, RLM dataset: 5590 drugs
+
+Data split methods: Random split 
+>>> from tdc.single_pred import ADME
+>>> data = ADME(name = 'hlm')
+# data = ADME(name = 'rlm')
+>>> split = data.get_split()
+
+References:
+[1] Li, L.; Lu, Z.; Liu, G.; Tang, Y.; Li, W. In Silico prediction of human and rat liver microsomal stability via machine learning methods. 
+Chemical Research in Toxicology 2022, 35 (9), 1614–1624. https://doi.org/10.1021/acs.chemrestox.2c00207.
+
+License: Not specified.
