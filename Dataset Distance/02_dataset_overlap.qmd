@@ -1,0 +1,94 @@
+
+
+```{r load-libraries}
+library(arrow)
+library(kernlab)
+
+# remotes::install_github("StoreyLab/qvalue")
+# needed for jaccard package, but not available on cran
+library(qvalue)
+
+library(jaccard)
+library(tictoc)
+```
+
+
+```{r load-dataset}
+
+########## Load RLM datasets #############
+HLM_train <- arrow::read_parquet("intermediate_data/HLM_train.parquet")
+HLM_train_features <- HLM_train$`Smiles::morgan` |>
+  unlist() |>
+  matrix(byrow=TRUE, nrow=length(HLM_train$`Smiles::morgan`))
+
+HLM_test <- arrow::read_parquet("intermediate_data/HLM_test.parquet")
+HLM_test_features <- HLM_test$`Smiles::morgan` |>
+  unlist() |>
+  matrix(byrow=TRUE, nrow=length(HLM_test$`Smiles::morgan`))
+
+HLM_external <- arrow::read_parquet("intermediate_data/HLM_external.parquet")
+HLM_external_features <- HLM_external$`Smiles::morgan` |>
+  unlist() |>
+  matrix(byrow=TRUE, nrow=length(HLM_external$`Smiles::morgan`))
+
+
+########## Load RLM datasets #############
+RLM_train <- arrow::read_parquet("intermediate_data/RLM_train.parquet")
+RLM_train_features <- RLM_train$`Smiles::morgan` |>
+  unlist() |>
+  matrix(byrow=TRUE, nrow=length(RLM_train$`Smiles::morgan`))
+
+RLM_test <- arrow::read_parquet("intermediate_data/RLM_test.parquet")
+RLM_test_features <- RLM_test$`Smiles::morgan` |>
+  unlist() |>
+  matrix(byrow=TRUE, nrow=length(RLM_test$`Smiles::morgan`))
+
+RLM_external <- arrow::read_parquet("intermediate_data/RLM_external.parquet")
+RLM_external_features <- RLM_external$`Smiles::morgan` |>
+  unlist() |>
+  matrix(byrow=TRUE, nrow=length(RLM_external$`Smiles::morgan`))
+```
+
+```{r demo-gaussian-mmd}
+
+tictoc::tic()
+mmd_HLM_train_HLM_test <- kernlab::kmmd(
+  x = x,
+  y = y)
+runtime <- tictoc::toc()
+
+cat(
+  "Maximum Mean Discrepancy with a Gaussian kernal ",
+  "between the HLM train and test set is: ",
+  mmd_HLM_train_HLM_test@mmdstats[1] |> signif(3), " ",
+  "runtime: ", runtime$callback_msg,
+  sep = "")
+```
+
+
+```{r demo-jaccard-mmd}
+jaccard_kernel <- function(kpar){
+  # just ignore hyperparameters for now
+  kernel <- jaccard::jaccard
+  attr(kernel, "class") <- "kernel"
+  kernel
+}
+
+tictoc::tic()
+x <- HLM_train_features[1:100,]
+y <- HLM_test_features[1:100,]
+
+mmd_HLM_train_HLM_test <- kernlab::kmmd(
+  x = x,
+  y = y,
+  kernel = jaccard_kernel,
+  kpar = list())
+runtime <- tictoc::toc()
+
+cat(
+  "Maximum Mean Discrepancy with a Jaccard kernal ",
+  "between the HLM train and test set is: ",
+  mmd_HLM_train_HLM_test@mmdstats[1] |> signif(3), " ",
+  "runtime: ", runtime$callback_msg,
+  sep = "")
+```
