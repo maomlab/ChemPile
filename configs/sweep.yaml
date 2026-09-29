@@ -1,0 +1,39 @@
+# Sweep
+
+program: ml_src/mlp_train.py # The script I want to run
+entity: haneulpark-university-of-michigan
+name: hlm_5_epochs
+project: chempile
+
+# Hyperparameter sweep configuration
+method: grid # Hyperparameter optimization method
+metric:
+  goal: minimize
+  name: valid_loss
+
+parameters:
+    ### TRAINER
+    gpus:
+        value: 1
+    epochs:
+        value: 5
+
+    ### OPTIMIZER
+    optimizer:
+        value: "adam"
+    learning_rate:
+        values: [0.00001, 0.0001, 0.001, 0.01]
+
+    task_path:
+        value: "featurised_datasets"
+    task_name:
+        values: ["HLM"]
+
+    ### DATA
+    batch_size:
+        values: [32, 64, 128, 256]
+
+early_terminate:
+  type: hyperband
+  max_iter: 5      # the same as number of epochs
+  eta: 3   # 1/3 would survive for the next round

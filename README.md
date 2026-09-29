@@ -5,6 +5,8 @@ Please see the (ChemPile datasets)[https://huggingface.co/collections/maomlab/ch
 
 
 ## Repository Structure
+```text
+
 chempile/
 │
 ├── README.md
@@ -22,7 +24,7 @@ chempile/
 │   │    └── load_dataset.py (src/st2_3_pytorch_dataloader.py)
 │   │    
 │   ├── distance/
-│   │    ├── mmd_formula.py (src/7. 7_2, 7_7, 7_8)
+│   │    ├── mmd_formula.py (src/7, 7_2, 7_7, 7_8)
 │   │    └── compute_mmd.py (src/8, 8_3, 8_8) 
 │   │
 │   ├── embedding/
@@ -51,3 +53,4 @@ chempile/
 │ 
 └── data/
     └── README.md (dataset download links)
+```
